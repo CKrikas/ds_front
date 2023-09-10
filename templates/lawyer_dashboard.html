@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lawyer Dashboard</title>
+    <script>
+        function confirmAccept(formId) {
+            if (confirm('Are you sure you want to accept this form?')) {
+                fetch(`/forms/accept/${formId}`, { method: 'POST' })
+                    .then(() => location.reload());
+            }
+        }
+    </script>
+</head>
+<body>
+<h1>Lawyer Dashboard</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Form ID</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for form in forms %}
+        <tr>
+            <td>{{ form.id }}</td>
+            <td>{{ form.status }}</td>
+            <td>
+                {% if form.lawyerPrimaryid == session['user']['id'] %}
+                    <form action="/forms/update/{{ form.id }}" method="post">
+                        <!-- Input fields for form data -->
+                        <input type="submit" value="Update">
+                    </form>
+                {% elif form.lawyerSecondaryid == session['user']['id'] and not form.lawyer2ndAccepted %}
+                    <button data-form-id="{{ form.id }}" class="accept-button">Accept</button>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<button onclick="location.href='/forms/create'">Create Form</button>
+
+<script>
+    document.querySelectorAll('.accept-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const formId = this.getAttribute('data-form-id');
+            confirmAccept(formId);
+        });
+    });
+</script>
+
+<button onclick="location.href='/lawyer/search'">Search User by AMKA</button>
+
+<br><br>
+<button onclick="location.href='/user/logout'">Logout</button>
+</body>
+</html>

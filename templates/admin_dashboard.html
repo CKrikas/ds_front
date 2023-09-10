@@ -17,6 +17,7 @@
 <table>
     <thead>
     <tr>
+        <th>id</th>
         <th>Name</th>
         <th>Surname</th>
         <th>AMKA</th>
@@ -27,6 +28,7 @@
     <tbody>
     {% for user in users %}
         <tr>
+            <td>{{ user.id }}</td>
             <td>{{ user.name }}</td>
             <td>{{ user.surname }}</td>
             <td>{{ user.amka }}</td>
@@ -40,5 +42,7 @@
 </table>
 <button onclick="location.href='/user/create'">Create User</button>
 <button onclick="location.href='/user/chooseUpdateMethod'">Update User</button>
+<br><br>
+<button onclick="location.href='/user/logout'">Logout</button>
 </body>
 </html>

@@ -31,8 +31,18 @@ def login():
     response = session_requests.post(f"{BASE_URL}/user/login", json=data)
     if response.status_code == 200:
         session['user'] = response.json()
-        return redirect('/admin/dashboard')
+        user_roles = [role['name'] for role in session['user']['roles']]
+        if 'ADMIN' in user_roles:
+            return redirect('/admin/dashboard')
+        elif 'LAWYER' in user_roles:
+            return redirect('/lawyer/dashboard')
+        elif 'SPOUSE' in user_roles:
+            return redirect('/spouse/dashboard')
+        elif 'NOTARY' in user_roles:
+            return redirect('/notary/dashboard')
     return redirect('/')
+
+# ------------------ ADMIN ------------------
 
 @app.route('/admin/dashboard')
 def admin_dashboard():
@@ -128,6 +138,63 @@ def logout():
     session_requests.post(f"{BASE_URL}/user/logout")
     session.pop('user', None)
     return redirect('/')
+
+# ------------------ USER ------------------
+# Form operations
+
+@app.route('/lawyer/dashboard')
+def lawyer_dashboard():
+    if 'user' not in session or not any(role['name'] == 'LAWYER' for role in session['user']['roles']):
+        return redirect('/')
+    response = session_requests.get(f"{BASE_URL}/forms/all")
+    if response.status_code == 200:
+        forms = response.json()
+    else:
+        forms = []
+    return render_template('lawyer_dashboard.html', forms=forms)
+
+@app.route('/forms/create', methods=['GET', 'POST'])
+def create_form():
+    if request.method == 'POST':
+        data = {
+            "spouse1id": request.form['spouse1id'],
+            "spouse2id": request.form['spouse2id'],
+            "lawyerPrimaryid": request.form['lawyerPrimaryid'],
+            "lawyerSecondaryid": request.form['lawyerSecondaryid'],
+            "notaryid": request.form['notaryid']
+        }
+        response = session_requests.post(f"{BASE_URL}/forms/lawyer", json=data)
+        return redirect('/lawyer/dashboard')
+    return render_template('create_form_template.html')
+
+@app.route('/forms/update/<int:id>', methods=['POST'])
+def update_form(id):
+    data = {
+        "spouse1id": request.form['spouse1id'],
+        "spouse2id": request.form['spouse2id'],
+        "lawyerPrimaryid": request.form['lawyerPrimaryid'],
+        "lawyerSecondaryid": request.form['lawyerSecondaryid'],
+        "notaryid": request.form['notaryid']
+    }
+    response = session_requests.put(f"{BASE_URL}/forms/lawyer/{id}", json=data)
+    return redirect('/lawyer/dashboard')
+
+@app.route('/forms/accept/<int:formId>', methods=['POST'])
+def accept_form(formId):
+    response = session_requests.put(f"{BASE_URL}/forms/{formId}/accept")
+    return redirect('/lawyer/dashboard')
+
+@app.route('/lawyer/search', methods=['GET', 'POST'])
+def lawyer_search_by_amka():
+    if request.method == 'POST':
+        amka = request.form['amka']
+        user = session_requests.get(f"{BASE_URL}/user/viewUserByAmka/{amka}").json()
+        if user:
+            return render_template('view_user.html', user=user)
+        else:
+            return "User not found", 404
+    return render_template('search_by_amka.html')
+
 
 if __name__ == '__main__':
     app.run(host="localhost", port=4000, debug=True)
