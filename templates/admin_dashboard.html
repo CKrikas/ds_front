@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <script>
+        function confirmDelete(buttonElement) {
+            const userId = buttonElement.getAttribute('data-user-id');
+            if (confirm('Are you sure you want to delete this user?')) {
+                fetch(`/user/deleteUser/${userId}`, { method: 'POST' })
+                    .then(() => location.reload());
+            }
+        }
+    </script>
+</head>
+<body>
+<h1>Admin Dashboard</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Surname</th>
+        <th>AMKA</th>
+        <th>AFM</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+        <tr>
+            <td>{{ user.name }}</td>
+            <td>{{ user.surname }}</td>
+            <td>{{ user.amka }}</td>
+            <td>{{ user.afm }}</td>
+            <td>
+                <button data-user-id="{{ user.id }}" onclick="confirmDelete(this)">Delete</button>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<button onclick="location.href='/user/create'">Create User</button>
+<button onclick="location.href='/user/chooseUpdateMethod'">Update User</button>
+</body>
+</html>

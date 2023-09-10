@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update User</title>
+</head>
+<body>
+<form action="{{ url_for('update_user', id=user.id) }}" method="post">
+    Name: <input type="text" name="name" value="{{ user.name }}"><br>
+    Surname: <input type="text" name="surname" value="{{ user.surname }}"><br>
+    AMKA: <input type="text" name="amka" value="{{ user.amka }}"><br>
+    AFM: <input type="text" name="afm" value="{{ user.afm }}"><br>
+    Password: <input type="password" name="password" placeholder="Enter new password if changing"><br>
+    Current User Type: <span>{{ user.roles[0].name }}</span><br>
+    New User Type: <select name="newUserType">
+        <option value="LAWYER">Lawyer</option>
+        <option value="NOTARY">Notary</option>
+        <option value="SPOUSE">Spouse</option>
+    </select><br>
+    <input type="submit" value="Update">
+</form>
+</body>
+</html>

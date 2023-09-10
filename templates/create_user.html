@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create User</title>
+</head>
+<body>
+<form action="/user/create" method="post">
+    Name: <input type="text" name="name"><br>
+    Surname: <input type="text" name="surname"><br>
+    AMKA: <input type="text" name="amka"><br>
+    AFM: <input type="text" name="afm"><br>
+    Password: <input type="password" name="password"><br>
+    User Type: <select name="userType">
+        <option value="LAWYER">Lawyer</option>
+        <option value="NOTARY">Notary</option>
+        <option value="SPOUSE">Spouse</option>
+    </select><br>
+    <input type="submit" value="Create">
+</form>
+</body>
+</html>
