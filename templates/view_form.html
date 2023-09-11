@@ -9,6 +9,20 @@
 <p><strong>Status:</strong> {{ form.status }}</p>
 <p><strong>Details:</strong> {{ form.details }}</p>
 <p><strong>Completion Date:</strong> {{ form.completionDate }}</p>
-<button onclick="window.history.back()">Go Back</button>
+<button onclick="redirectToDashboard()">Go Back</button>
+<script>
+    function redirectToDashboard() {
+        const role = "{{ session['user']['roles'][0]['name'] }}";
+        if (role === 'LAWYER') {
+            location.href = '/lawyer/dashboard';
+        } else if (role === 'SPOUSE') {
+            location.href = '/spouse/dashboard';
+        } else if (role === 'NOTARY') {
+            location.href = '/notary/dashboard';
+        } else {
+            window.history.back();
+        }
+    }
+</script>
 </body>
 </html>

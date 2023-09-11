@@ -224,6 +224,31 @@ def view_form(id):
         return render_template('view_form.html', form=form)
     else:
         return "Form not found", 404
+    
+@app.route('/notary/dashboard')
+def notary_dashboard():
+    if 'user' not in session or not any(role['name'] == 'NOTARY' for role in session['user']['roles']):
+        return redirect('/')
+    response = session_requests.get(f"{BASE_URL}/forms/all")
+    if response.status_code == 200:
+        forms = response.json()
+    else:
+        forms = []
+    return render_template('notary_dashboard.html', forms=forms)
+
+@app.route('/forms/notary/<int:formId>/complete', methods=['POST'])
+def finalize_form(formId):
+    details = request.form['details']
+    response = session_requests.put(f"{BASE_URL}/forms/notary/{formId}", json={"details": details})
+    if response.status_code == 200:
+        return redirect('/notary/dashboard')
+    else:
+        return "Error finalizing form", 400
+
+@app.route('/forms/notary/<int:formId>/finalize')
+def show_finalize_form(formId):
+    return render_template('finalize_form.html', formId=formId)
+
 
 
 if __name__ == '__main__':

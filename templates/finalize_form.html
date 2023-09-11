@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Finalize Form</title>
+</head>
+<body>
+<h1>Finalize Form {{ formId }}</h1>
+
+<form action="/forms/notary/{{ formId }}/complete" method="post">
+    <label for="details">Enter Details:</label>
+    <textarea name="details" required></textarea>
+    <br>
+    <input type="submit" value="Submit">
+</form>
+
+</body>
+</html>

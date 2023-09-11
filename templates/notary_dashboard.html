@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Notary Dashboard</title>
+    <script>
+        function finalizeForm(formId) {
+            let details = prompt("Please enter the details for the form:");
+            if (details && confirm('Are you sure you want to finalize this form?')) {
+                // Set the value of the hidden input field
+                document.querySelector(`#finalize-form-${formId} input[name="details"]`).value = details;
+                // Submit the form
+                document.getElementById(`finalize-form-${formId}`).submit();
+            }
+        }
+    </script>
+</head>
+<body>
+<h1>Notary Dashboard</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Form ID</th>
+        <th>Spouse 1</th>
+        <th>Spouse 2</th>
+        <th>Notary</th>
+        <th>Secondary Lawyer</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+        {% for form in forms %}
+        <tr>
+            <td>{{ form.id }}</td>
+            <td>{{ "✓" if form.spouse1accepted else "" }}</td>
+            <td>{{ "✓" if form.spouse2accepted else "" }}</td>
+            <td>{{ "✓" if form.notaryaccepted else "" }}</td>
+            <td>{{ "✓" if form.lawyer2ndAccepted else "" }}</td>            
+            <td>{{ form.status }}</td>
+            <td>
+                {% if form.status != "Completed" %}
+                <a href="/forms/notary/{{ form.id }}/finalize">Finalize</a>
+            {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<button onclick="location.href='/forms/search'">Search Form by ID</button>
+<br><br>
+<button onclick="location.href='/user/logout'">Logout</button>
+</body>
+</html>
