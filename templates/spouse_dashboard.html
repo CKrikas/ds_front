@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spouse Dashboard</title>
+    <script>
+        function confirmAccept(formId) {
+            if (confirm('Are you sure you want to accept this form?')) {
+                fetch(`/forms/accept/${formId}`, { method: 'PUT' })
+                    .then(() => location.reload());
+            }
+        }
+    </script>
+</head>
+<body>
+<h1>Spouse Dashboard</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Form ID</th>
+        <th>Spouse 1</th>
+        <th>Spouse 2</th>
+        <th>Notary</th>
+        <th>Secondary Lawyer</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+        {% for form in forms %}
+        <tr>
+            <td>{{ form.id }}</td>
+            <td>{{ "✓" if form.spouse1accepted else "" }}</td>
+            <td>{{ "✓" if form.spouse2accepted else "" }}</td>
+            <td>{{ "✓" if form.notaryaccepted else "" }}</td>
+            <td>{{ "✓" if form.lawyer2ndAccepted else "" }}</td>            
+            <td>{{ form.status }}</td>
+            <td>
+                {% if form.spouse1id == session['user']['id'] or form.spouse2id == session['user']['id'] %}
+                    {% if not form.spouse1accepted or not form.spouse2accepted %}
+                        <button data-form-id="{{ form.id }}" class="accept-button">Accept</button>
+                    {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    document.querySelectorAll('.accept-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const formId = this.getAttribute('data-form-id');
+            confirmAccept(formId);
+        });
+    });
+</script>
+
+<button onclick="location.href='/forms/search'">Search Form by ID</button>
+
+<br><br>
+<button onclick="location.href='/user/logout'">Logout</button>
+</body>
+</html>

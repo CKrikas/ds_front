@@ -198,7 +198,32 @@ def lawyer_search_by_amka():
             return "User not found", 404
     return render_template('search_by_amka.html')
 
+@app.route('/spouse/dashboard')
+def spouse_dashboard():
+    if 'user' not in session or not any(role['name'] == 'SPOUSE' for role in session['user']['roles']):
+        return redirect('/')
+    response = session_requests.get(f"{BASE_URL}/forms/all")
+    if response.status_code == 200:
+        forms = response.json()
+    else:
+        forms = []
+    return render_template('spouse_dashboard.html', forms=forms)
 
+@app.route('/forms/search', methods=['GET', 'POST'])
+def search_form():
+    if request.method == 'POST':
+        form_id = request.form['formId']
+        return redirect(url_for('view_form', id=form_id))
+    return render_template('search_form.html')
+
+@app.route('/forms/viewForm/<int:id>', methods=['GET'])
+def view_form(id):
+    response = session_requests.get(f"{BASE_URL}/forms/viewForm/{id}")
+    if response.status_code == 200:
+        form = response.json()
+        return render_template('view_form.html', form=form)
+    else:
+        return "Form not found", 404
 
 
 if __name__ == '__main__':
