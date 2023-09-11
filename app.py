@@ -159,7 +159,6 @@ def create_form():
         data = {
             "spouse1id": request.form['spouse1id'],
             "spouse2id": request.form['spouse2id'],
-            "lawyerPrimaryid": request.form['lawyerPrimaryid'],
             "lawyerSecondaryid": request.form['lawyerSecondaryid'],
             "notaryid": request.form['notaryid']
         }
@@ -169,17 +168,21 @@ def create_form():
 
 @app.route('/forms/update/<int:id>', methods=['POST'])
 def update_form(id):
+    form = session_requests.get(f"{BASE_URL}/forms/{id}").json()
+    if form['status'] == "Completed":
+        return redirect('/lawyer/dashboard')
+    
     data = {
         "spouse1id": request.form['spouse1id'],
         "spouse2id": request.form['spouse2id'],
-        "lawyerPrimaryid": request.form['lawyerPrimaryid'],
         "lawyerSecondaryid": request.form['lawyerSecondaryid'],
         "notaryid": request.form['notaryid']
     }
     response = session_requests.put(f"{BASE_URL}/forms/lawyer/{id}", json=data)
     return redirect('/lawyer/dashboard')
 
-@app.route('/forms/accept/<int:formId>', methods=['POST'])
+
+@app.route('/forms/accept/<int:formId>', methods=['PUT'])
 def accept_form(formId):
     response = session_requests.put(f"{BASE_URL}/forms/{formId}/accept")
     return redirect('/lawyer/dashboard')
@@ -194,6 +197,8 @@ def lawyer_search_by_amka():
         else:
             return "User not found", 404
     return render_template('search_by_amka.html')
+
+
 
 
 if __name__ == '__main__':

@@ -5,7 +5,7 @@
     <script>
         function confirmAccept(formId) {
             if (confirm('Are you sure you want to accept this form?')) {
-                fetch(`/forms/accept/${formId}`, { method: 'POST' })
+                fetch(`/forms/accept/${formId}`, { method: 'PUT' })
                     .then(() => location.reload());
             }
         }
@@ -17,17 +17,25 @@
     <thead>
     <tr>
         <th>Form ID</th>
+        <th>Spouse 1</th>
+        <th>Spouse 2</th>
+        <th>Notary</th>
+        <th>Secondary Lawyer</th>
         <th>Status</th>
         <th>Actions</th>
     </tr>
     </thead>
     <tbody>
-    {% for form in forms %}
+        {% for form in forms %}
         <tr>
             <td>{{ form.id }}</td>
+            <td>{{ "✓" if form.spouse1accepted else "" }}</td>
+            <td>{{ "✓" if form.spouse2accepted else "" }}</td>
+            <td>{{ "✓" if form.notaryaccepted else "" }}</td>
+            <td>{{ "✓" if form.lawyer2ndAccepted else "" }}</td>            
             <td>{{ form.status }}</td>
             <td>
-                {% if form.lawyerPrimaryid == session['user']['id'] %}
+                {% if form.lawyerPrimaryid == session['user']['id'] and form.status != "Completed" %}
                     <form action="/forms/update/{{ form.id }}" method="post">
                         <!-- Input fields for form data -->
                         <input type="submit" value="Update">
